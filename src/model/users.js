@@ -3,7 +3,11 @@ const moment = require('moment')
 
 const UserSchema = new mongoose.Schema({
   firstName: {type: String, default: 'first'},
-  lastName: {type: String, default: 'last'},
+  lastName: {type: String, required: [true, 'Last Name required']},
+  email: {type: String, required: true, match: /^[A-Z0-9._]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i},
+  password: String,
+  createdAt: Date,
+  updatedAt: Date,
 });
 
 const Users = mongoose.model('user', UserSchema);
@@ -12,6 +16,8 @@ module.exports = {
 
   insert: function (userData) {
     return new Promise((resolve) => {
+      userData['createdAt'] = moment();
+      userData['updatedAt'] = moment();
       new Users(userData).save(function (err, data) {
         resolve((err) ? false : data)
       })
@@ -34,6 +40,15 @@ module.exports = {
     })
   },
 
+  findByEmail: function (email) {
+    console.log('email', email)
+    return new Promise((resolve) => {
+      Users.findOne({email}, function (error, data) {
+        resolve((error) ? {} : (data == null) ? {} : data)
+      })
+    })
+  },
+
   delete: function (id) {
     return new Promise((resolve) => {
       Users.findByIdAndRemove(id, function (error, data) {
@@ -51,7 +66,7 @@ module.exports = {
             resData[rKey] = data[rKey];
           });
 
-          // resData['updatedAt'] = moment();
+          resData['updatedAt'] = moment();
 
           resData.save( function(error, data){
             resolve((error) ? false : data);
