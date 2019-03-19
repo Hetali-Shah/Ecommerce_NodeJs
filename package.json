@@ -9,6 +9,10 @@
   "author": "Hetali Shah",
   "license": "ISC",
   "dependencies": {
-    "express": "4.16.4"
+    "body-parser": "^1.18.3",
+    "express": "4.16.4",
+    "moment": "2.18.1",
+    "mongoose": "4.10.8",
+    "nodemon": "1.11.0"
   }
 }
