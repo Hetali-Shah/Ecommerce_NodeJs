@@ -1,29 +1,48 @@
-const UsersModal = require('../model/users');
+const UsersModel = require('../model/users');
 
 
 module.exports = {
-  findAll: function (req,res) {
-    res.send([{name:'wine1'}, {name:'wine2'}, {name:'wine3'}]);
+
+  getAllUser: function (req,res) {
+      UsersModel.getAll().then((userRes) => {
+        res.json({status: true, data: userRes})
+      })
+
   },
 
-  findById: function (req, res) {
-    res.send({id:req.params.id, name: "The Name", description: "description"});
-  },
-
-  delete: function (req, res) {
-    res.send({id:req.params.id, name: "The Name", description: "description"});
-  },
   signUpUser: function (req, res) {
-    const {firstName, lastName} = req.body;
-    res.json({firstName, lastName});
+      const {firstName, lastName} = req.body;
+      const userData = {
+        firstName,
+        lastName
+      };
+      UsersModel.insert(userData).then((userRes) => {
+        res.json({status: true, data:userRes})
+      })
+  },
 
-    //Create Users
+  getUser: function (req, res) {
+    const { id } = req.params;
+        UsersModel.findById(id).then((userRes) => {
+          res.json({status: true, data:userRes})
+        })
+  },
 
-    const userData = {
-      firstName,
-      lastName
-    };
-    UsersModal.insert(userData)
+  deleteUserById:function (req, res) {
+    const { id } = req.params;
+      UsersModel.delete(id).then((response) => {
+        res.json({status: true, message:'Delete SuccessFully!!!.... '})
+      })
 
-  }
+  },
+
+  updateUserById:function (req, res) {
+    const {...rest} = req.body;
+    const { id } = req.params;
+
+    UsersModel.update(id, ...rest).then((userRes) => {
+      res.json({status: true, message:'Update SuccessFully!!!.... ', data:userRes})
+    })
+
+  },
 };
