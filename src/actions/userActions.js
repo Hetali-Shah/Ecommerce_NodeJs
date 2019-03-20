@@ -10,7 +10,7 @@ module.exports = {
 
   },
 
-  signUpUser: function (req, res) {
+  signupUser: function (req, res) {
     UsersModel.findByEmail(req.body.email).then((data) => {
       if(Object.keys(data).length > 0) {
         res.json({status:false,message:'Email already used!'});
@@ -20,13 +20,29 @@ module.exports = {
           firstName,
           lastName,
           email,
-          password
+          password,
+          isVerified:true,
         };
         UsersModel.insert(userData).then((userRes) => {
-          res.json({status: true, data:userRes})
+          res.json({status: true, data:userRes, message:'Sing up success!'})
         });
       }
     });
+  },
+
+  logInUser: async function (req, res) {
+    const { email, password } = req.body;
+    await UsersModel.findByCredential(email, password).then((loginRes) => {
+        if(Object.keys(loginRes).length > 0) {
+          if(!loginRes.isVerified) {
+            res.json({status:false, message: 'Please verify your account'})
+          } else {
+            res.json({status:true, data:loginRes, message:'Login Successfully !!!'})
+          }
+        } else {
+          res.json({status:false, message:'Invalid Login'})
+        }
+    })
   },
 
   getUser: function (req, res) {
@@ -41,7 +57,6 @@ module.exports = {
     UsersModel.delete(id).then((response) => {
       res.json({status: true, message:'Delete SuccessFully!!!.... '})
     })
-
   },
 
   updateUserById:function (req, res) {

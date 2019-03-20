@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
   password: String,
   createdAt: Date,
   updatedAt: Date,
+  isVerified: Boolean,
 });
 
 const Users = mongoose.model('user', UserSchema);
@@ -40,8 +41,16 @@ module.exports = {
     })
   },
 
+  findByCredential: function (email, password) {
+    return new Promise((resolve) => {
+      console.log('email ------------', email, password)
+      Users.findOne({email, password}, function (error, data) {
+        resolve((error) ? {} : (data == null) ? {} : data)
+      })
+    })
+  },
+
   findByEmail: function (email) {
-    console.log('email', email)
     return new Promise((resolve) => {
       Users.findOne({email}, function (error, data) {
         resolve((error) ? {} : (data == null) ? {} : data)
