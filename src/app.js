@@ -18,5 +18,6 @@ router.use(function(req, res, next) {
 
 
 app.use('/user', require('./routes/userRoutes'));
+app.use('/category', require('./routes/categoryRoutes'));
 
 module.exports = app;
